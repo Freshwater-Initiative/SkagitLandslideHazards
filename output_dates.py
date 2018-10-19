@@ -23,7 +23,7 @@ def calc_water_year_apply(df):
     df['water_year'] = df.datetime.apply(lambda row: calc_water_year(row))        
 # <codecell>
 #load file
-data = pd.read_csv('saturation_extent.txt', sep='\s+', header=
+data = pd.read_csv('/Users/carina/Desktop/code/SkagitLandslideHazards/saturation_extent.txt', sep='\s+', header=
 None, names=["time", "sat_value"])
 data.shape
 #data.head # what the data looks like
@@ -66,3 +66,5 @@ out_all
 # <codecell>
 temp = group
 tem = temp.sort_values(by=['sat_value'], ascending=False)
+
+
