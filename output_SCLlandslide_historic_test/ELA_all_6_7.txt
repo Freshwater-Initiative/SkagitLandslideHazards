@@ -1,0 +1,16 @@
+ 1960 -nan -nan -nan meters
+ 1961 2078.895 -nan -nan meters
+ 1962 2029.977 -nan -nan meters
+ 1963 1986.291 -nan -nan meters
+ 1964 2226.324 -nan -nan meters
+ 1965 1948.094 -nan -nan meters
+ 1966 2267.640 -nan -nan meters
+ 1967 2212.621 -nan -nan meters
+ 1968 2327.480 -nan -nan meters
+ 1969 2396.112 -nan -nan meters
+ 1970 2197.040 -nan -nan meters
+ 1971 2232.863 -nan 2461.500 meters
+ 1972 2173.667 -nan 2461.500 meters
+ 1973 2373.941 -nan -nan meters
+ 1974 2170.012 -nan -nan meters
+ 1975 2300.016 -nan -nan meters
