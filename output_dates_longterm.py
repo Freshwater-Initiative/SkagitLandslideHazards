@@ -91,7 +91,7 @@ def make_list_dates_output(list_dates):
     list_ = []    
     for index in range(len(list_dates)):
         date_test = list_dates[index]
-        date_string = "Map date {} {}".format(index + 1, date_test.to_pydatetime().strftime("%m/%d/%Y-%H"))
+        date_string = "Map date 1 {} {}".format(index + 1, date_test.to_pydatetime().strftime("%m/%d/%Y-%H"))
     #    print("Map date {} {}".format(index + 1, date_test.to_pydatetime().strftime("%m/%d/%Y-%H")))
         list_.append(date_string)
     return list_    
