@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Oct 16 08:18:30 2018
-Updated May 4, 2019
+Updated May 7, 2019
 
 @author: Nicoleta Cristea (cristn@uw.edu)
 """
@@ -68,7 +68,7 @@ def make_list_dates_output(list_dates):
     list_ = []    
     for index in range(len(list_dates)):
         date_test = list_dates[index]
-        date_string = "Map date 1 {} {}".format(index + 1, date_test.to_pydatetime().strftime("%m/%d/%Y-%H"))
+        date_string = "Map date {} 1= {}".format(index + 1, date_test.to_pydatetime().strftime("%m/%d/%Y-%H"))
     #    print("Map date {} {}".format(index + 1, date_test.to_pydatetime().strftime("%m/%d/%Y-%H")))
         list_.append(date_string)
     return list_    
@@ -124,7 +124,6 @@ list_6 = make_list_dates_output(temp_6)
 with open('export_dates_sat_NorESM1_M_rcp45', 'w') as f:
     for item in list_6:
         f.write("%s\n" % item)
-
 
 
 
