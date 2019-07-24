@@ -674,16 +674,16 @@ class LandslideProbability(Component):
             self._rel_wetness = ((self._Re)/self._T)*(self._a/np.sin(
             np.arctan(self._theta)))
         elif self.groundwater__depth_distribution == 'uniform':
-            self._rel_wetness = (self._De - self._hs_mode)*(self._a/np.sin(
-            np.arctan(self._theta)))     
+            self._rel_wetness = ((self._hs_mode - self._De)/self._T)*(self._a/np.sin(
+            np.arctan(self._theta)))  
         elif self.groundwater__depth_distribution == 'lognormal':
-            self._rel_wetness = (self._De - self._hs_mode)*(self._a/np.sin(
-            np.arctan(self._theta)))          
+            self._rel_wetness = ((self._hs_mode - self._De)/self._T)*(self._a/np.sin(
+            np.arctan(self._theta)))       
         elif self.groundwater__depth_distribution == 'lognormal_spatial':
-            self._rel_wetness = (self._De - self._hs_mode)*(self._a/np.sin(
+            self._rel_wetness = ((self._hs_mode - self._De)/self._T)*(self._a/np.sin(
             np.arctan(self._theta)))          
         elif self.groundwater__depth_distribution == 'data_driven_spatial':
-            self._rel_wetness = (self._De - self._hs_mode)*(self._a/np.sin(
+            self._rel_wetness = ((self._hs_mode - self._De)/self._T)*(self._a/np.sin(
             np.arctan(self._theta)))          
         
         
