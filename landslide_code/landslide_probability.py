@@ -78,16 +78,16 @@ class LandslideProbability(Component):
         LandslideProbability(grid, number_of_iterations=250,
         groundwater__depth_distribution='uniform', 
         groundwater__depth_min_value=0,
-        groundwater__depth_max_value=3000.)
+        groundwater__depth_max_value=2.)
     Option 6 - Lognormal recharge
         LandslideProbability(grid, number_of_iterations=250,
         groundwater__depth_distribution='lognormal', 
-        groundwater__depth_mean=0.,
-        groundwater__depth_standard_deviation=100)
+        groundwater__depth_mean=0.5.,
+        groundwater__depth_standard_deviation=0.1)
     Option 7 - Lognormal_spatial recharge
         LandslideProbability(grid, number_of_iterations=250,
         groundwater__depth_distribution='lognormal_spatial', 
-        groundwater__depth_mean=np.random.randint(10, 1000, grid_size),
+        groundwater__depth_mean=np.random.randint(0, 2, grid_size),
         groundwater__depth_standard_deviation=np.random.rand(grid_size))        
     Option 8 - Data_driven_spatial depth to water
         LandslideProbability(grid, number_of_iterations=250,
@@ -126,14 +126,14 @@ class LandslideProbability(Component):
         single word indicating recharge distribution, either 'uniform',
         'lognormal', 'lognormal_spatial,' or 'data_driven_spatial'.
          (default='uniform')
-    groundwater__depth_min_value: float, optional (mm/d)
-        minium groundwater depth for 'uniform' (default=20.)
-    groundwater__depth_max_value: float, optional (mm/d)
-        maximum groundwater depth for 'uniform' (default=120.)
-    groundwater__depth_mean: float, optional (mm/d) 
+    groundwater__depth_min_value: float, optional (m)
+        minium groundwater depth for 'uniform' (default=0.)
+    groundwater__depth_max_value: float, optional (m)
+        maximum groundwater depth for 'uniform' (default=2.)
+    groundwater__depth_mean: float, optional (m) 
         mean grounwater rechardepthge for 'lognormal'
         and 'lognormal_spatial' (default=None)
-    groundwater__depth_standard_deviation: float, optional (mm/d)
+    groundwater__depth_standard_deviation: float, optional (m)
         standard deviation of grounwater depth for 'lognormal'
         and 'lognormal_spatial' (default=None)
     groundwater__depth_HSD_inputs: list, optional
@@ -221,7 +221,7 @@ class LandslideProbability(Component):
     >>> grid.at_node['soil__internal_friction_angle'] = np.sort(
     ...      np.random.randint(26, 40, grid.number_of_nodes))
     >>> grid.at_node['soil__thickness'] = np.sort(
-    ...      np.random.randint(1, 10, grid.number_of_nodes))
+    ...      np.random.randint(1, 3, grid.number_of_nodes))
     >>> grid.at_node['soil__density'] = (2000. * np.ones(grid.number_of_nodes))
     
     Instantiate the 'LandslideProbability' component to work on this grid,
@@ -674,19 +674,14 @@ class LandslideProbability(Component):
             self._rel_wetness = ((self._Re)/self._T)*(self._a/np.sin(
             np.arctan(self._theta)))
         elif self.groundwater__depth_distribution == 'uniform':
-            self._rel_wetness = ((self._hs_mode - self._De)/self._T)*(self._a/np.sin(
-            np.arctan(self._theta)))  
+            self._rel_wetness = ((self._hs_mode-self._De)/self._hs_mode)
         elif self.groundwater__depth_distribution == 'lognormal':
-            self._rel_wetness = ((self._hs_mode - self._De)/self._T)*(self._a/np.sin(
-            np.arctan(self._theta)))       
+            self._rel_wetness = ((self._hs_mode-self._De)/self._hs_mode)       
         elif self.groundwater__depth_distribution == 'lognormal_spatial':
-            self._rel_wetness = ((self._hs_mode - self._De)/self._T)*(self._a/np.sin(
-            np.arctan(self._theta)))          
+            self._rel_wetness = ((self._hs_mode-self._De)/self._hs_mode)          
         elif self.groundwater__depth_distribution == 'data_driven_spatial':
-            self._rel_wetness = ((self._hs_mode - self._De)/self._T)*(self._a/np.sin(
-            np.arctan(self._theta)))          
-        
-        
+            self._rel_wetness = ((self._hs_mode-self._De)/self._hs_mode)
+                  
         # calculate probability of saturation
         countr = 0
         for val in self._rel_wetness:            # find how many RW values >= 1
