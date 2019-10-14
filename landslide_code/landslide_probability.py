@@ -1,4 +1,5 @@
 #!/usr/env/python
+print('You are not going crazy...')
 
 """Landlab component that simulates landslide probability of failure as well
 as mean relative wetness and probability of saturation.
@@ -16,13 +17,25 @@ divided by the number of iterations.
 .. codeauthor:: R.Strauch, E.Istanbulluoglu, & S.S.Nudurupati
 University of Washington
 
-Ref 1: Strauch et. al. 2017, 'A hydro-climatological approach to predicting
-regional landslide probability using Landlab, Earth Surface Dynamics, In prep.
+Ref 1: Strauch et al., (2018) "A hydroclimatological approach to predicting regional landslide probability using Landlab", Earth Surf. Dynam., 6, 1-26 .
 
 Ref 2: 'The Landlab LandslideProbability Component User Manual'
 
 Created on Thu Aug 20, 2015
 Last edit June 7, 2017
+
+.. codeauthor:: R.Strauch, C.Bandaragoda
+Seattle City Light, University of Washington
+
+Ref 3: Strauch et al., (2020) "Slippery future 
+
+Ref 4: Strauch, R., C. Raymond, C. Bandaragoda, N. Cristea (2019). Landslide Hazard Modeling in the Skagit Basin, HydroShare, http://www.hydroshare.org/resource/70d746c7da584ae6bd2f88deb5a4c188
+
+Landslide Component Changes: Add depth to water table to optional input, alternative to recharge.
+Created on May 7, 2019
+Last edit Oct 14, 2019
+
+
 """
 
 # %% Import Libraries
@@ -272,6 +285,8 @@ class LandslideProbability(Component):
         'soil__mean_relative_wetness',
         'landslide__probability_of_failure',
         'soil__probability_of_saturation',
+        'soil__thickness',
+        'soil__depth_to_groundwater',
         )
 
     # units for each parameter and output
@@ -289,6 +304,8 @@ class LandslideProbability(Component):
         'soil__mean_relative_wetness': 'None',
         'landslide__probability_of_failure': 'None',
         'soil__probability_of_saturation': 'None',
+        'soil__thickness': 'None',
+        'soil__depth_to_groundwater': 'None',
         }
 
     # grid centering of each field and variable
@@ -306,6 +323,8 @@ class LandslideProbability(Component):
         'soil__mean_relative_wetness': 'node',
         'landslide__probability_of_failure': 'node',
         'soil__probability_of_saturation': 'node',
+        'soil__thickness': 'node',
+        'soil__depth_to_groundwater': 'node',
         }
 
     # short description of each field
@@ -346,6 +365,8 @@ class LandslideProbability(Component):
         'soil__probability_of_saturation':
             ('number of times relative wetness is >=1 out of' +
              ' number of iterations user selected'),
+         'soil__thickness': 'soil depth to restrictive layer',
+         'soil__depth_to_groundwater': 'distance from ground surface to groundwater table; distance to saturated soils',
         }
 
     # Run Component
@@ -359,7 +380,7 @@ class LandslideProbability(Component):
                  groundwater__recharge_HSD_inputs=[],
                  groundwater__depth_distribution='uniform',
                  groundwater__depth_min_value=0.,
-                 groundwater__depth_max_value=3000.,
+                 groundwater__depth_max_value=3.,
                  groundwater__depth_mean=None,
                  groundwater__depth_standard_deviation=None,
                  groundwater__depth_HSD_inputs=[],
@@ -442,11 +463,11 @@ class LandslideProbability(Component):
         # parameters
         # Recharge Uniform distribution
         
-        #dummy values initiatized to teh correct size
+        #dummy values initiatized to the correct size
         self._De = np.random.uniform(0, 1, size=self.n)
         self._Re = np.random.uniform(0, 1, size=self.n)
         self._recharge_mean = 0
-        self._depth_mean = 0
+        self._depth_mean = (groundwater__depth_max_value - groundwater__depth_min_value)/2
     
         if self.groundwater__recharge_distribution == 'uniform':
             self._recharge_min = groundwater__recharge_min_value
@@ -495,7 +516,7 @@ class LandslideProbability(Component):
             self._depth_max = groundwater__depth_max_value
             self._De = np.random.uniform(self._depth_min, self._depth_max,
                                         size=self.n)
-            self._De /= 1000. # Convert mm to m
+
         # Depth to water table Lognormal Distribution - Uniform in space
         if self.groundwater__depth_distribution == 'lognormal':
             assert (groundwater__depth_mean != None), (
@@ -510,7 +531,7 @@ class LandslideProbability(Component):
                 self._depth_mean**2)+1))
             self._De = np.random.lognormal(self._mu_lognormal,
                                           self._sigma_lognormal, self.n)
-            self._De /= 1000. # Convert mm to m
+
         # Depth to water table  Lognormal Distribution - Variable in space                                  
         if self.groundwater__depth_distribution == 'lognormal_spatial':
             assert (groundwater__depth_mean.shape[0] == (
@@ -521,6 +542,7 @@ class LandslideProbability(Component):
                 'Input array should be of the length of grid.number_of_nodes!')
             self._depth_mean = groundwater__depth_mean
             self._depth_stdev = groundwater__depth_standard_deviation
+            
         # Depth to water table Custom HSD inputs - Hydrologic Source Domain -> Model Domain
         if self.groundwater__depth_distribution == 'data_driven_spatial':
             self._HSD_dict = groundwater__depth_HSD_inputs[0]
@@ -585,12 +607,14 @@ class LandslideProbability(Component):
         self._rho = self.grid.at_node['soil__density'][i]
         self._hs_mode = self.grid.at_node['soil__thickness'][i]
 
+
         # recharge distribution based on distribution type
         if self.groundwater__recharge_distribution == 'data_driven_spatial':
             self._calculate_HSD_recharge(i)
             self._Re /= 1000.  # mm->m
             self._calculate_HSD_depth(i)
-            self._De /= 1000.  # mm->m
+            #dummy value
+            self._De /= self._Re*1000 # dummy variable  
             
         if self.groundwater__recharge_distribution == 'lognormal_spatial':
             mu_lognormal = np.log((self._recharge_mean[i]**2)/np.sqrt(
@@ -602,15 +626,15 @@ class LandslideProbability(Component):
             self._Re /= 1000. # Convert mm to m
             
             #dummy value
-            self._De = self._Re
+            self._De = self._Re*1000 # dummy variable
             
         # Depth to water table distribution based on distribution type
   
         if self.groundwater__depth_distribution == 'data_driven_spatial':
             self._calculate_HSD_recharge(i)
-            self._Re /= 1000.  # mm->m
+            self._Re /= 1000.  # mm->m # dummy variable
             self._calculate_HSD_depth(i)
-            self._De /= 1000.  # mm->m
+            self._De   # mm->m
         
         if self.groundwater__depth_distribution == 'lognormal_spatial':
             
@@ -620,10 +644,9 @@ class LandslideProbability(Component):
                 self._depth_mean[i]**2)+1))
             self._De = np.random.lognormal(mu_lognormal,
                                           sigma_lognormal, self.n)
-            self._De /= 1000. # Convert mm to m
-            
+                       
                         #dummy value
-            self._Re = self._De
+            self._Re = self._De*1000  # dummy variable
 
         # Cohesion
         # if don't provide fields of min and max C, uncomment 2 lines below
@@ -682,6 +705,7 @@ class LandslideProbability(Component):
         elif self.groundwater__depth_distribution == 'data_driven_spatial':
             self._rel_wetness = ((self._hs_mode-self._De)/self._hs_mode)
                   
+    
         # calculate probability of saturation
         countr = 0
         for val in self._rel_wetness:            # find how many RW values >= 1
@@ -704,6 +728,8 @@ class LandslideProbability(Component):
                 count = count + 1   # number with unstable FS values (<=1)
         # probability: No. unstable values/total No. of values (n)
         self._landslide__probability_of_failure = np.array(count/self.n)
+        
+        
 
     def calculate_landslide_probability(self, **kwds):
 
@@ -719,6 +745,9 @@ class LandslideProbability(Component):
         self.mean_Relative_Wetness = np.full(self.grid.number_of_nodes, -9999.)
         self.prob_fail = np.full(self.grid.number_of_nodes, -9999.)
         self.prob_sat = np.full(self.grid.number_of_nodes, -9999.) 
+        #self._hs_mode = np.full(self.grid.number_of_nodes, -9999.) 
+        #self._De = np.full(self.grid.number_of_nodes, -9999.) 
+        
         # Run factor of safety Monte Carlo for all core nodes in domain
         # i refers to each core node id
         for i in self.grid.core_nodes:
@@ -727,6 +756,9 @@ class LandslideProbability(Component):
             self.mean_Relative_Wetness[i] = self._soil__mean_relative_wetness
             self.prob_fail[i] = self._landslide__probability_of_failure
             self.prob_sat[i] = self._soil__probability_of_saturation
+            #self._hs_mode[i] = self._soil__thickness
+            #self._De[i] = self._soil__depth_to_groundwater
+            
         # Values can't be negative
         self.mean_Relative_Wetness[
             self.mean_Relative_Wetness < 0.] = 0.
@@ -736,6 +768,8 @@ class LandslideProbability(Component):
             self.mean_Relative_Wetness)
         self.grid.at_node['landslide__probability_of_failure'] = self.prob_fail
         self.grid.at_node['soil__probability_of_saturation'] = self.prob_sat
+        
+        self.grid.at_node['soil__depth_to_groundwater'] = np.mean(self._De)*np.ones(self.grid.number_of_nodes)
 
     def _seed_generator(self, seed=0):
         """Seed the random-number generator. This method will create the same
