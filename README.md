@@ -102,13 +102,14 @@ Omit --global to set the identity only in this repository.
 git config --global user.email "myemail@univ.edu
 git config --global user.name "ChristinaB"
 ```
-Do some work in a Notebook. Then use this sequence to tell Github that all changed files should be staged to move from the server to Github. Status prints out the changes, so you always review what you are going to push before you push it. Commiting the change with a message is the same task as uploading a file or changing a file from github.com repository interface.  
+5.2 **Do every time**  Do some work in a Notebook. Then use this sequence to tell Github that all changed files should be staged to move from the server to Github. Status prints out the changes, so you always review what you are going to push before you push it. Commiting the change with a message is the same task as uploading a file or changing a file from github.com repository interface.  
 ```
 git add *
 git status
 git commit -m"this is a brief useful note on the change or work"
 git push
 ```
+
 ### Notebook User Instructions for interactive compute on [CSDMS JupyterHub](https://www)
 Work in Progress.
 
