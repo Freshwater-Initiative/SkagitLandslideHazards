@@ -16,27 +16,46 @@ This resource is an updated copy of the work published in Strauch et al., (2018)
 
 ## Technical Steps to Get Started Developing Content and Code from the repository
 
-### Notebook User Instructions for interactive compute [CUAHSI Compute]
+## Notebook User Instructions for interactive compute 
 
-#### Steps if you are new to this cyber-ecosystem
-1. Go to HydroShare.org and login at www.hydroshare.org  
+#### If you are new to this cyber-ecosystem, start at Section 1.0. As you learn, start your work at other sections.
 
-### Notebook User Instructions for interactive compute on [CyberGIS for Water](https://www.hydroshare.org/group/157)
+### 1.0 Get access to the data
+Go to HydroShare.org and login at www.hydroshare.org. You will need a HydroShare user account to download data from the HydroShare data repository.  We also use this user ID to access computational resources and servers. 
 
-2. Do one time: Go to Collaborate, Find the CyberGIS for Water Compute Group, Ask to Join.
+VOCAB: Server: it could be high performance or under your friends desk.  It's an online networked computer that enables you to access it from your web browser. 
 
-3. Next time: Go directly to https://js-168-155.jetstream-cloud.org/
+### 2.0 Get access to a computer
+
+#### Notebook User Instructions specific for interactive compute on [CyberGIS for Water](https://www.hydroshare.org/group/157)
+
+2.1 **Do one time** From the HydroShare website, top dashboard, Go to Collaborate. Find the CyberGIS for Water Compute Group, Ask to Join. An owner of a compute group may also invite you to join using your email or HydroShare User ID.  An owner must confirm membership in order to access their server from a HydroShare resource.
+
+2.2. **Next time** Go directly to https://js-168-155.jetstream-cloud.org/
 
 - Example link to the File Directory View: https://js-168-155.jetstream-cloud.org/user/christinabandaragoda/tree
 - Example link to the Jupyter Lab View: https://js-168-155.jetstream-cloud.org/user/christinabandaragoda/lab
 
-New users: Get familiar with JupyterHub platform with [Juptyer Notebook new user instructions] and [JuptyerHub Documentation](https://jupyterhub.readthedocs.io/en/stable/index.html)
+New users: Get familiar with JupyterHub platform with [Juptyer Notebook new user instructions](   ) and [JuptyerHub Documentation](https://jupyterhub.readthedocs.io/en/stable/index.html)
 
-4a. Open a Jupyter Notebook.  The example is enabled with code to interact with this repository.  
+2.3. Open a Jupyter Notebook.  The example is enabled with code to interact with this repository.  
 
-Open `DHSVM_landslide_model_GithubFriendly.ipynb`
+Open a New Notebook  `Untitled.ipynb`.  Save, rename, navigate the folder structure.  
 
-4b.  Open an new "Terminal" session and clone the github repository by running the command:
+### 3.0 Setup to Push/Pull code using Github
+3.1 **Do one time** Use Jupyter Lab interface to add a Github folder to your user space and clone this repository. 
+Add a new Folder using the + icon. Name it Github. 
+Open a terminal. 
+`cd /home/jovyan/work`
+`pwd`
+`ls`
+`cd /home/jovyan/work/Github`
+```
+> git clone https://github.com/Freshwater-Initiative/SkagitLandslideHazards.git
+
+```
+
+3.2 **Do one time**  Use a new "Terminal" session and clone the github repository by running the command:
 
 The terminal opens in /home/jovyan/
 
@@ -47,14 +66,48 @@ The terminal opens in /home/jovyan/
 Make a new directory specific to your Github repositories on this server. 
 
 ```
-> mkdir Github`   
+> mkdir Github   
 
 ```
 Clone the github repository by running the command:
 
 ```
-> https://github.com/Freshwater-Initiative/SkagitLandslideHazards.git
+> git clone https://github.com/Freshwater-Initiative/SkagitLandslideHazards.git
 
+```
+Open a Notebook using the directory structure on the left, go to Notebooks folder, click on a Notebook.ipynb
+
+### 4.0 Pull code using Github
+
+If this repository changes, and you do not have any changes to save, simply pull the changes to your workspace.
+Go back to the terminal view and run these lines.
+
+```
+> cd SkagitLandslideHazards
+> git pull
+```
+Open a Notebook using the directory structure on the left, go to Notebooks folder, click on the changed Notebook.ipynb
+
+### 5.0 Push code using Github
+5.1 **Do one time** Set up permissions with Github from this computer
+
+Run
+```
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+```
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+```
+git config --global user.email "myemail@univ.edu
+git config --global user.name "ChristinaB"
+```
+Do some work in a Notebook. Then use this sequence to tell Github that all changed files should be staged to move from the server to Github. Status prints out the changes, so you always review what you are going to push before you push it. Commiting the change with a message is the same task as uploading a file or changing a file from github.com repository interface.  
+```
+git add *
+git status
+git commit -m"this is a brief useful note on the change or work"
+git push
 ```
 ### Notebook User Instructions for interactive compute on [CSDMS JupyterHub](https://www)
 Work in Progress.
